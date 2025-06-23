@@ -1,0 +1,21 @@
+[project]
+name = "autocode-loquio"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "beautifulsoup4>=4.13.4",
+    "boto3>=1.38.41",
+    "crewai>=0.130.0",
+    "crewai-tools>=0.47.1",
+    "gradio>=5.34.2",
+    "markdown>=3.8.2",
+    "matplotlib>=3.5.0",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.0",
+    "pypdf2>=3.0.1",
+    "python-dotenv>=1.1.0",
+    "sqlalchemy>=2.0.41",
+    "tavily-python>=0.7.8",
+]

@@ -1,0 +1,63 @@
+# Model Configuration
+# Easy to switch between models based on cost/quality preferences
+
+models:
+  lead_researcher:
+    provider: "bedrock"
+    model_id: "us.anthropic.claude-sonnet-4-20250514-v1:0"
+    temperature: 0.7
+    max_tokens: 4096
+    description: "High-quality model for research planning and synthesis"
+    
+  sub_researcher:
+    provider: "bedrock"
+    model_id: "us.anthropic.claude-3-5-haiku-20241022-v1:0"
+    temperature: 0.5
+    max_tokens: 2048
+    description: "Cost-effective model for parallel research tasks"
+    
+  citation_agent:
+    provider: "bedrock"
+    model_id: "us.anthropic.claude-3-5-haiku-20241022-v1:0"
+    temperature: 0.3
+    max_tokens: 1024
+    description: "Precise model for citation extraction and formatting"
+    
+  quality_controller:
+    provider: "bedrock"
+    model_id: "us.anthropic.claude-3-5-haiku-20241022-v1:0"
+    temperature: 0.3
+    max_tokens: 2048
+    description: "Analytical model for evaluating research quality"
+    
+  source_evaluator:
+    provider: "bedrock"
+    model_id: "us.anthropic.claude-3-5-haiku-20241022-v1:0"
+    temperature: 0.2
+    max_tokens: 1024
+    description: "Precise model for assessing source credibility"
+    
+  fact_checker:
+    provider: "bedrock"
+    model_id: "us.anthropic.claude-3-5-haiku-20241022-v1:0"
+    temperature: 0.2
+    max_tokens: 2048
+    description: "Meticulous model for fact verification and cross-referencing"
+
+# Model pricing (per 1M tokens)
+pricing:
+  "us.anthropic.claude-sonnet-4-20250514-v1:0":
+    input: 3.00
+    output: 15.00
+  "us.anthropic.claude-3-5-haiku-20241022-v1:0":
+    input: 0.80
+    output: 4.00
+  "us.anthropic.claude-opus-4-20250514-v1:0":
+    input: 15.00
+    output: 75.00
+
+# Agent configuration
+agents:
+  min_sub_researchers: 4
+  max_sub_researchers: 20
+  default_sub_researchers: 7
