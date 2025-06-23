@@ -64,10 +64,13 @@ The codebase follows a modular architecture:
   - `fact_checker.py`: Verifies claims and cross-references information
 
 - **`/src/`**: Infrastructure components
-  - `config.py`: Pydantic-based configuration management
-  - `bedrock_client.py`: AWS Bedrock client for Claude model access
-  - `thought_logger.py`: Centralized thought logging system for AI visibility
+  - `config.py`: Pydantic-based configuration management with validation
+  - `bedrock_client.py`: AWS Bedrock client with credential chain support
+  - `thought_logger.py`: Thread-safe centralized thought logging system
   - `research_database.py`: SQLite database for persistent research history
+  - `security.py`: Security utilities for path validation and input sanitization
+  - `exceptions.py`: Custom exception hierarchy for better error handling
+  - `rate_limiter.py`: API rate limiting to prevent abuse
 
 - **`/tools/`**: External integrations
   - `search_tool.py`: Tavily search API with SQLite caching
@@ -85,6 +88,7 @@ The codebase follows a modular architecture:
    - Lead Researcher: Claude 3 Sonnet (more capable, higher cost)
    - Sub-Researchers: Claude 3 Haiku (faster, lower cost)
    - Models are accessed via AWS Bedrock
+   - Supports AWS credential chain (IAM roles, env vars, config files)
 
 2. **Caching System**:
    - SQLite database stores search results to minimize API calls
@@ -174,6 +178,7 @@ The codebase follows a modular architecture:
 - **Session Selection**: Click on any past research session to view details
   - Fixed SelectData event handling for proper row selection (Fixed 2025-06-22)
 - **Detailed Synthesis**: Balanced between concrete answers and sufficient explanation
+- **Security Hardening**: Input validation, path protection, and rate limiting (Added 2025-06-22)
 
 ### Analyzing Research Behavior
 - Check the "Research Process" tab in the UI for real-time AI thoughts
@@ -225,3 +230,34 @@ The codebase follows a modular architecture:
    - Avoids duplicate searches
    - Follows up on insufficient results
    - Maximum search efficiency
+
+### Security Features (Added 2025-06-22)
+1. **Credential Protection**:
+   - Environment variables for all sensitive data
+   - AWS credential chain support (IAM roles preferred)
+   - No hardcoded secrets in codebase
+   - API key masking in debug output
+
+2. **Input Validation**:
+   - Path traversal protection for all file operations
+   - User input sanitization to prevent injection
+   - Filename sanitization for generated files
+   - URL validation for external resources
+
+3. **Rate Limiting**:
+   - Configurable API rate limits (10/hour for Tavily)
+   - Prevents API abuse and cost overruns
+   - Thread-safe implementation
+
+4. **Error Handling**:
+   - Custom exception types for specific errors
+   - Sensitive data redacted from error messages
+   - Proper resource cleanup with context managers
+
+### Security Best Practices
+- Always use `security.validate_path()` for file operations
+- Sanitize user input with `security.sanitize_user_input()`
+- Handle errors using specific exceptions from `src.exceptions`
+- Never log sensitive data - use `security.redact_sensitive_data()`
+- Run `config.validate_configuration()` on startup
+- See SECURITY.md for comprehensive security guidelines
