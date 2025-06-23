@@ -10,12 +10,21 @@ class BedrockClient:
     """Wrapper for AWS Bedrock API with token counting and cost tracking."""
     
     def __init__(self):
-        self.client = boto3.client(
-            'bedrock-runtime',
-            region_name=config.settings.aws_region,
-            aws_access_key_id=config.settings.aws_access_key_id,
-            aws_secret_access_key=config.settings.aws_secret_access_key
-        )
+        # Use AWS credentials chain - prefers IAM roles, then env vars, then config files
+        # Only explicitly set credentials if they are provided in config
+        client_kwargs = {
+            'service_name': 'bedrock-runtime',
+            'region_name': config.settings.aws_region
+        }
+        
+        # Only add explicit credentials if both are provided
+        if config.settings.aws_access_key_id and config.settings.aws_secret_access_key:
+            client_kwargs.update({
+                'aws_access_key_id': config.settings.aws_access_key_id,
+                'aws_secret_access_key': config.settings.aws_secret_access_key
+            })
+        
+        self.client = boto3.client(**client_kwargs)
         self.total_input_tokens = 0
         self.total_output_tokens = 0
         self.total_cost = 0.0
@@ -80,6 +89,7 @@ class BedrockClient:
             return response_body
             
         except ClientError as e:
+            from .exceptions import BedrockAPIError, RateLimitError
             error_code = e.response['Error']['Code']
             error_message = e.response['Error']['Message']
             
@@ -87,8 +97,12 @@ class BedrockClient:
                 # Implement exponential backoff
                 time.sleep(2)
                 return self.invoke_model(model_id, messages, temperature, max_tokens, system_prompt)
+            elif error_code == 'AccessDeniedException':
+                raise BedrockAPIError(f"Access denied to Bedrock model {model_id}. Check IAM permissions.")
+            elif error_code == 'ValidationException':
+                raise BedrockAPIError(f"Invalid request to Bedrock: {error_message}")
             else:
-                raise Exception(f"Bedrock API error: {error_code} - {error_message}")
+                raise BedrockAPIError(f"Bedrock API error: {error_code} - {error_message}")
     
     def get_response_text(self, response: Dict[str, Any]) -> str:
         """Extract the text content from the model response."""

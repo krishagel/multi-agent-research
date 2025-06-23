@@ -27,6 +27,7 @@ class ThoughtLogger:
         self.subscribers: List[Callable] = []
         self.log_to_file = log_to_file
         self.session_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self._lock = threading.Lock()  # Thread safety for shared resources
         
         if self.log_to_file:
             self.log_dir = Path("data/thought_logs")
@@ -65,15 +66,21 @@ class ThoughtLogger:
         while self.processing:
             try:
                 thought = self.thought_queue.get(timeout=0.1)
-                self.thoughts.append(thought)
+                
+                # Thread-safe append to thoughts list
+                with self._lock:
+                    self.thoughts.append(thought)
                 
                 # Write to file if enabled
                 if self.log_to_file:
                     with open(self.log_file, 'a') as f:
                         f.write(json.dumps(thought) + '\n')
                 
-                # Notify subscribers
-                for subscriber in self.subscribers:
+                # Notify subscribers (copy list to avoid modification during iteration)
+                with self._lock:
+                    subscribers_copy = self.subscribers.copy()
+                
+                for subscriber in subscribers_copy:
                     try:
                         subscriber(thought)
                     except Exception as e:
@@ -132,8 +139,14 @@ class ThoughtLogger:
     
     def export_thoughts(self, filepath: Optional[Path] = None) -> Path:
         """Export all thoughts to a JSON file."""
+        from .security import security
+        
         if not filepath:
-            filepath = self.log_dir / f"thought_export_{self.session_id}.json"
+            filename = security.sanitize_filename(f"thought_export_{self.session_id}.json")
+            filepath = self.log_dir / filename
+        
+        # Validate the path
+        filepath = security.validate_path(filepath, base_dir=Path.cwd())
         
         export_data = {
             "session_id": self.session_id,

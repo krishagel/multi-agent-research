@@ -74,7 +74,7 @@ class TavilySearchTool:
         self.debug = debug
         
         if self.debug:
-            print(f"[DEBUG] Initializing Tavily with API key: {'*' * 10}{self.api_key[-4:] if self.api_key else 'None'}")
+            print(f"[DEBUG] Initializing Tavily with API key: {'*' * 10 if self.api_key else 'None'}")
         
         if not self.api_key:
             raise ValueError("Tavily API key not found in configuration")
@@ -132,6 +132,10 @@ class TavilySearchTool:
             print(f"  Max Results: {max_results}")
             print(f"  Include Domains: {include_domains}")
             print(f"  Exclude Domains: {exclude_domains}")
+        
+        # Apply rate limiting (Tavily free tier: 1000/month ≈ 33/day ≈ 1.4/hour)
+        from src.rate_limiter import rate_limiter
+        rate_limiter.wait_if_needed('tavily_api', max_calls=10, window_seconds=3600)  # 10 per hour
         
         try:
             response = self.client.search(

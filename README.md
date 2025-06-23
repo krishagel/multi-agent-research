@@ -158,8 +158,21 @@ Typical costs per research query:
 - Quality Control: ~$0.02-0.04
 - **Total: ~$0.10-0.20**
 
+## Security
+
+The system implements comprehensive security measures:
+- Secure credential management with environment variables
+- Input validation and sanitization
+- Path traversal protection
+- Rate limiting for API calls
+- SQL injection prevention
+- Thread-safe operations
+
+See [SECURITY.md](SECURITY.md) for detailed security information.
+
 ## Recent Updates
 
+- **2025-06-22**: Implemented comprehensive security measures
 - **2025-06-22**: Fixed session selection and made citations clickable
 - **2025-06-22**: Added comprehensive architecture documentation
 - **2025-06-22**: Enhanced synthesis with concrete answers

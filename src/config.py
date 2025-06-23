@@ -115,6 +115,20 @@ class ConfigManager:
             name: config.get("description", config.get("model_id", ""))
             for name, config in models.items()
         }
+    
+    def validate_configuration(self) -> None:
+        """Validate that all required configuration is present."""
+        from .exceptions import ConfigurationError
+        
+        if not self.settings.tavily_api_key:
+            raise ConfigurationError("Tavily API key is required. Set TAVILY_API_KEY in .env")
+        
+        if not self.settings.aws_region:
+            raise ConfigurationError("AWS region is required. Set AWS_REGION in .env")
+        
+        # Check if at least one model is configured
+        if not self._models_config.get("models"):
+            raise ConfigurationError("No models configured in models.yaml")
 
 # Global config instance
 config = ConfigManager()

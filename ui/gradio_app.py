@@ -398,6 +398,10 @@ class ResearchUI:
         if not query.strip():
             return "Please enter a research query.", "Error", None, None
         
+        # Sanitize user input
+        from src.security import security
+        query = security.sanitize_user_input(query, max_length=1000)
+        
         try:
             # Start new research session - clears thought stream and search results
             thought_logger.start_new_session()
@@ -850,12 +854,15 @@ Click "View Full Session" to see complete details including findings and sources
         if not session:
             return None
         
-        # Create export file
+        # Create export file with path validation
+        from src.security import security
         export_path = Path("data/exports")
         export_path.mkdir(parents=True, exist_ok=True)
         
-        filename = f"research_export_{session_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
-        filepath = export_path / filename
+        filename = security.sanitize_filename(
+            f"research_export_{session_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        )
+        filepath = security.validate_path(export_path / filename, base_dir=Path.cwd())
         
         with open(filepath, 'w') as f:
             json.dump(session, f, indent=2, default=str)

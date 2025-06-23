@@ -13,26 +13,16 @@ warnings.filterwarnings("ignore")
 
 def check_config():
     """Check if required configuration is present."""
-    missing_config = []
+    from src.exceptions import ConfigurationError
     
-    if not config.settings.tavily_api_key:
-        missing_config.append("TAVILY_API_KEY")
-    
-    if not config.settings.aws_access_key_id:
-        missing_config.append("AWS_ACCESS_KEY_ID")
-        
-    if not config.settings.aws_secret_access_key:
-        missing_config.append("AWS_SECRET_ACCESS_KEY")
-    
-    if missing_config:
-        print("⚠️  Missing required configuration:")
-        for item in missing_config:
-            print(f"   - {item}")
+    try:
+        config.validate_configuration()
+        return True
+    except ConfigurationError as e:
+        print(f"⚠️  Configuration Error: {e}")
         print("\nPlease update your .env file with the required values.")
-        print("Example .env file has been created with placeholder values.")
+        print("See .env.example for reference.")
         return False
-    
-    return True
 
 def main():
     """Run the research system."""

@@ -16,7 +16,7 @@ class ResearchDatabase:
     
     def _init_database(self):
         """Initialize the database schema."""
-        with sqlite3.connect(self.db_path) as conn:
+        with sqlite3.connect(self.db_path, timeout=30.0) as conn:
             # Research sessions table
             conn.execute('''
                 CREATE TABLE IF NOT EXISTS research_sessions (
