@@ -133,10 +133,6 @@ class TavilySearchTool:
             print(f"  Include Domains: {include_domains}")
             print(f"  Exclude Domains: {exclude_domains}")
         
-        # Apply rate limiting (Tavily free tier: 1000/month ≈ 33/day ≈ 1.4/hour)
-        from src.rate_limiter import rate_limiter
-        rate_limiter.wait_if_needed('tavily_api', max_calls=10, window_seconds=3600)  # 10 per hour
-        
         try:
             response = self.client.search(
                 query=query,

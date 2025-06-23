@@ -70,7 +70,6 @@ The codebase follows a modular architecture:
   - `research_database.py`: SQLite database for persistent research history
   - `security.py`: Security utilities for path validation and input sanitization
   - `exceptions.py`: Custom exception hierarchy for better error handling
-  - `rate_limiter.py`: API rate limiting to prevent abuse
 
 - **`/tools/`**: External integrations
   - `search_tool.py`: Tavily search API with SQLite caching
@@ -178,7 +177,7 @@ The codebase follows a modular architecture:
 - **Session Selection**: Click on any past research session to view details
   - Fixed SelectData event handling for proper row selection (Fixed 2025-06-22)
 - **Detailed Synthesis**: Balanced between concrete answers and sufficient explanation
-- **Security Hardening**: Input validation, path protection, and rate limiting (Added 2025-06-22)
+- **Security Hardening**: Input validation, path protection, and usage monitoring (Added 2025-06-22)
 
 ### Analyzing Research Behavior
 - Check the "Research Process" tab in the UI for real-time AI thoughts
@@ -244,10 +243,10 @@ The codebase follows a modular architecture:
    - Filename sanitization for generated files
    - URL validation for external resources
 
-3. **Rate Limiting**:
-   - Configurable API rate limits (10/hour for Tavily)
-   - Prevents API abuse and cost overruns
-   - Thread-safe implementation
+3. **Usage Monitoring**:
+   - Track API usage with search_count
+   - Monitor against Tavily's monthly limit (1000/month)
+   - Check usage statistics in the UI
 
 4. **Error Handling**:
    - Custom exception types for specific errors

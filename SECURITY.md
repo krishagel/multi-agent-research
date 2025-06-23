@@ -19,7 +19,7 @@ This document outlines the security measures implemented in the Multi-Agent Rese
 - **URL Validation**: External URLs are validated before use
 
 ### 3. API Security
-- **Rate Limiting**: Prevents API abuse with configurable rate limits
+- **Usage Tracking**: Monitor API usage against provider limits
 - **Error Handling**: Sensitive error details are not exposed to users
 - **Debug Mode Protection**: API keys are fully masked even in debug output
 
@@ -77,7 +77,7 @@ Before deploying to production:
 - [ ] All API keys are in environment variables
 - [ ] `.env` file has restricted permissions (chmod 600)
 - [ ] AWS IAM roles are configured with minimal permissions
-- [ ] Rate limiting is configured appropriately
+- [ ] API usage is monitored against provider limits
 - [ ] Debug mode is disabled
 - [ ] All dependencies are up to date
 - [ ] Network access is properly restricted

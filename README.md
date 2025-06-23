@@ -164,7 +164,7 @@ The system implements comprehensive security measures:
 - Secure credential management with environment variables
 - Input validation and sanitization
 - Path traversal protection
-- Rate limiting for API calls
+- API usage monitoring and tracking
 - SQL injection prevention
 - Thread-safe operations
 
@@ -172,6 +172,7 @@ See [SECURITY.md](SECURITY.md) for detailed security information.
 
 ## Recent Updates
 
+- **2025-06-22**: Removed rate limiting for better performance
 - **2025-06-22**: Implemented comprehensive security measures
 - **2025-06-22**: Fixed session selection and made citations clickable
 - **2025-06-22**: Added comprehensive architecture documentation
